@@ -1,2 +1,6 @@
 fastapi==0.104.1
 pymongo[srv]
+pandas
+datetime
+flask
+uvicorn

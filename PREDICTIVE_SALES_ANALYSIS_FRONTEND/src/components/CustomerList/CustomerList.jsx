@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CustomerForm from "./CustomerForm";
+import MostSoldItem from "../MostSoldItem/MostSoldItem";
 
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
@@ -11,15 +12,15 @@ const CustomerList = () => {
   useEffect(() => {
     // Fetch customers from Flask backend
     axios
-      .get("http://localhost:5000/api/customers")
+      .get("http://localhost:8000/api/customers")
       .then((response) => setCustomers(response.data))
       .catch((error) => console.error("Error fetching customers:", error));
 
     // Fetch most sold item from Flask backend
-    axios
-      .get("http://localhost:5000/api/most-sold-item")
-      .then((response) => setMostSoldItem(response.data))
-      .catch((error) => console.error("Error fetching most sold item:", error));
+    // axios
+    //   .get("http://localhost:8000/api/most-sold-item")
+    //   .then((response) => setMostSoldItem(response.data))
+    //   .catch((error) => console.error("Error fetching most sold item:", error));
   }, []);
 
   const handleDeleteCustomer = (customerId) => {
@@ -55,7 +56,7 @@ const CustomerList = () => {
       </ul>
 
       <h2 style={styles.header}>Most Sold Item</h2>
-      {mostSoldItem && (
+      {/* {mostSoldItem && (
         <div style={styles.mostSoldContainer}>
           <p style={styles.mostSoldText}>
             <strong>Name:</strong> {mostSoldItem.name}
@@ -67,7 +68,8 @@ const CustomerList = () => {
             <strong>Total Purchases:</strong> {mostSoldItem.totalPurchases}
           </p>
         </div>
-      )}
+      )} */}
+      <MostSoldItem />
     </div>
   );
 };

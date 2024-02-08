@@ -16,7 +16,7 @@ const CustomerForm = () => {
 
     // Add customer via Flask backend
     axios
-      .post("http://localhost:5000/api/customers", newCustomer)
+      .post("http://localhost:8000/api/customers", newCustomer)
       .then((response) => {
         console.log(response.data.message);
         // Optionally, you can fetch the updated customer list after adding a new customer

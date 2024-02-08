@@ -1,34 +1,60 @@
-from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo
+from ml_model import predict_sales
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+from pymongo import MongoClient
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
-app = Flask(__name__)
+app = FastAPI()
+origins = ["*"]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # MongoDB Configuration
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/customer_db'
-mongo = PyMongo(app)
+client = MongoClient("mongodb+srv://sandu:1234@students.qfd4mdf.mongodb.net/")
+db = client["mydatabase"]
+collection = db["students"]
 
 # Sample route to check if the server is running
-@app.route('/')
+@app.get('/')
 def index():
-    return "Flask server is running!"
+    return "FastAPI server is running!"
 
-# Customer CRUD operations
-@app.route('/api/customers', methods=['GET'])
+# Endpoint to predict sales for a given month
+@app.get('/api/predict/{month}')
+def predict_sales_for_month(month: int):
+    try:
+        sales_prediction = predict_sales(month)
+        return JSONResponse(content={"sales_prediction": sales_prediction})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Get all customers
+@app.get('/api/customers')
 def get_customers():
-    customers = list(mongo.db.customers.find({}, {'_id': 0}))
-    return jsonify(customers)
+    customers = list(collection.find({}, {'_id': 0}))
+    return JSONResponse(content={"customers": customers})
 
-@app.route('/api/customers', methods=['POST'])
-def add_customer():
-    new_customer = request.json
-    mongo.db.customers.insert_one(new_customer)
-    return jsonify({'message': 'Customer added successfully'})
+# Add a new customer
+@app.post('/api/customers')
+def add_customer(new_customer: dict):
+    collection.insert_one(new_customer)
+    return JSONResponse(content={"message": "Customer added successfully"})
 
-@app.route('/api/customers/<int:customer_id>', methods=['DELETE'])
-def delete_customer(customer_id):
-    mongo.db.customers.delete_one({'id': customer_id})
-    return jsonify({'message': 'Customer deleted successfully'})
+# Delete a customer by ID
+@app.delete('/api/customers/{customer_id}')
+def delete_customer(customer_id: int):
+    result = collection.delete_one({'id': customer_id})
+    if result.deleted_count == 1:
+        return JSONResponse(content={"message": "Customer deleted successfully"})
+    else:
+        raise HTTPException(status_code=404, detail="Customer not found")
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
