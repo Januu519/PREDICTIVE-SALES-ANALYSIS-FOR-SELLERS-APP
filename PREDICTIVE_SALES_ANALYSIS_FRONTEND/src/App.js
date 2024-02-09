@@ -9,7 +9,7 @@ const App = () => {
     color: "#3f51b5", // Indigo color
     textAlign: "center",
   }}>
-      <h1 >Project name ek danna</h1>
+      <h1 >PREDICTIVE SALES ANALYSIS FOR SELLERS </h1>
       <CustomerList />
     </div>
   );
