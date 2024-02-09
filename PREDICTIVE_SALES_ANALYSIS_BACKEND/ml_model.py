@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+import calendar
 
 def predict_sales(data):
     # Read the CSV file into a DataFrame
@@ -22,6 +23,6 @@ def predict_sales(data):
         most_selling_product = product_sales.idxmax()
         sales_quantity = product_sales.max()
 
-        return (f"The most selling product in the month is {most_selling_product} with a total of {sales_quantity} units sold.")
+        return (f"The most selling product in the {calendar.month_name[data]} is {most_selling_product} with a total of {sales_quantity} units sold.")
     else:
         return("There are no sales data available for the month.")

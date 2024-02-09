@@ -16,9 +16,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # MongoDB Configuration
-client = MongoClient("mongodb+srv://sandu:1234@students.qfd4mdf.mongodb.net/")
+client = MongoClient("mongodb+srv://janu:1234@cluster0.ao3pboe.mongodb.net/?retryWrites=true&w=majority")
 db = client["mydatabase"]
-collection = db["students"]
+collection = db["customers"]
 
 # Sample route to check if the server is running
 @app.get('/')
@@ -47,9 +47,9 @@ def add_customer(new_customer: dict):
     return JSONResponse(content={"message": "Customer added successfully"})
 
 # Delete a customer by ID
-@app.delete('/api/customers/{customer_id}')
-def delete_customer(customer_id: int):
-    result = collection.delete_one({'id': customer_id})
+@app.delete('/api/customers/{name}')
+def delete_customer(name: str):
+    result = collection.delete_one({'name': name})
     if result.deleted_count == 1:
         return JSONResponse(content={"message": "Customer deleted successfully"})
     else:
