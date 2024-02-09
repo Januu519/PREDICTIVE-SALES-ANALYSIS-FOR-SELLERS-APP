@@ -1,15 +1,16 @@
-// src/App.js
-
 import React from 'react';
 import CustomerList from './components/CustomerList/CustomerList';
 import MostSoldItem from './components/MostSoldItem/MostSoldItem';
 
 const App = () => {
   return (
-    <div>
-      <h1>React Customer Management</h1>
+    <div style={{
+      marginBottom: "80px",
+    color: "#3f51b5", // Indigo color
+    textAlign: "center",
+  }}>
+      <h1 >Project name ek danna</h1>
       <CustomerList />
-      <MostSoldItem />
     </div>
   );
 };

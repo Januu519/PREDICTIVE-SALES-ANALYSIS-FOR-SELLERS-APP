@@ -13,7 +13,7 @@ const CustomerList = () => {
     // Fetch customers from Flask backend
     axios
       .get("http://localhost:8000/api/customers")
-      .then((response) => setCustomers(response.data))
+      .then((response) => setCustomers(response.data.customers))
       .catch((error) => console.error("Error fetching customers:", error));
 
     // Fetch most sold item from Flask backend
@@ -23,14 +23,21 @@ const CustomerList = () => {
     //   .catch((error) => console.error("Error fetching most sold item:", error));
   }, []);
 
-  const handleDeleteCustomer = (customerId) => {
+  const getAllCustomers = () => {
+    axios
+      .get("http://localhost:8000/api/customers")
+      .then((response) => setCustomers(response.data.customers))
+      .catch((error) => console.error("Error fetching customers:", error));
+  };
+
+  const handleDeleteCustomer = (customerName) => {
     // Delete customer via Flask backend
     axios
-      .delete(`http://localhost:5000/api/customers/${customerId}`)
+      .delete(`http://localhost:8000/api/customers/${customerName}`)
       .then((response) => {
         console.log(response.data.message);
         setCustomers(
-          customers.filter((customer) => customer.id !== customerId)
+          customers.filter((customer) => customer.name !== customerName)
         );
       })
       .catch((error) => console.error("Error deleting customer:", error));
@@ -38,16 +45,33 @@ const CustomerList = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.header}>Customer List</h2>
+      <h2 style={styles.header}>Customer Management</h2>
       <CustomerForm />
+      <button
+        style={{
+          height: 40,
+          width: 200,
+          borderRadius: 100,
+          padding: "0px 20px",
+          backgroundColor: "blue",
+          color: "white",
+          border: "1px solid gray",
+        }}
+        onClick={() => {
+          getAllCustomers();
+          alert("Customer list refreshed!");
+        }}
+      >
+        Refresh
+      </button>
       <ul style={styles.list}>
         {customers.map((customer) => (
-          <li key={customer.id} style={styles.item}>
+          <li style={styles.item}>
             <span style={styles.customerName}>{customer.name}</span> -{" "}
             <span style={styles.customerEmail}>{customer.email}</span>
             <button
               style={styles.button}
-              onClick={() => handleDeleteCustomer(customer.id)}
+              onClick={() => handleDeleteCustomer(customer.name)}
             >
               Delete
             </button>
@@ -55,7 +79,6 @@ const CustomerList = () => {
         ))}
       </ul>
 
-      <h2 style={styles.header}>Most Sold Item</h2>
       {/* {mostSoldItem && (
         <div style={styles.mostSoldContainer}>
           <p style={styles.mostSoldText}>
@@ -87,6 +110,9 @@ const styles = {
     padding: 0,
   },
   item: {
+    borderRadius: 100,
+    marginLeft: "10%",
+    marginRight: "10%",
     marginBottom: "10px",
     padding: "10px",
     border: "1px solid #ddd",
